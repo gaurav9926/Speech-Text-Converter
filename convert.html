@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html >
+<head>
+    <link rel="stylesheet" href="style.css">
+    <title>Speech To Text</title>
+</head>
+<body >
+<!-- <div id="dropContainer" style="border:1px solid black;height:100px;"> -->
+   <!-- Drop Here -->
+<!-- </div> -->
+  <div id="container">
+  <header>Please Refresh the page after every file conversion.</header>
+  <h3>Select File:</h3>
+            <!-- console.log("NOO"); -->
+  <form  method="post" enctype="multipart/form-data" id="myForm" >
+    <input type="hidden" name="key" value="${filename}" />
+    <input type="hidden" name="success_action_status" value="200" />
+    <!-- <input id="myInput" type="file">     -->
+    <input type="file" name="file" id="file">
+    <input type="submit" value="Submit" id="submit" onclick=upload_file(event)>
+    <!-- <button id="myBtn" onclick="myFunction(event)">Run Query</button> -->
+</form>
+
+  </div>
+  <div >
+    <div id="errors"></div>  
+    <h3 id="transcript"></h3>
+  </div>  
+    <script src="https://apis.google.com/js/client.js"></script>
+
+  <script type="text/javascript">
+    var res=0,res2=0,corr=0,done=0,id=0,FILE="";
+    
+    
+    
+    function upload_file(event)
+    {
+        // var x = document.querySelector('input').files[0];
+        // x.disabled = true;
+        document.getElementById('submit').disabled = true;
+        var testForm = document.getElementById('myForm');
+        FILE = myForm.file.files[0].name;
+        
+        testForm.onsubmit = function(event) {
+            event.preventDefault();
+        }
+        var request = new XMLHttpRequest();
+        // POST to any url
+        request.open('POST','http://storage.googleapis.com/audio_frejun/' , true);
+        // request.setRequestHeader('access-control-allow-origin', '*');
+        request.onload = function() {
+            if(this.status == 200){
+                // console.log(myForm.file.files[0]);
+                callAPI(myForm.file.files[0].name);
+                // delete_file();
+            }
+            else{
+                console.log("ERRORORO");
+                document.getElementById('error') = "ERROR IN FILE UPLOAD.";
+            }
+        };
+        // request.setRequestHeader("access-aontrol-allow-header", "Origin, X-Requested-With, Content-Type, Accept");
+        var formData = new FormData(document.getElementById('myForm'));
+        console.log(formData);
+        // var formData = {
+            // file: document.getElementById('myForm').file,
+        // }
+        request.send(formData);
+        // console.log("ASDASD");
+        // console.log(myForm.file);
+        // callAPI(myForm.file);
+        
+    }
+
+    // function sendForm(e){
+    //      e.preventDefault();
+    // }
+
+
+    // function formSubmit(event) {
+    //     var url = "http://storage.googleapis.com/audio_frejun";
+    //     var request = new XMLHttpRequest();
+    //     request.open('POST', url, true);
+    //     request.setRequestHeader();
+    //     request.onload = function() { // request successful
+    //     // we can use server response to our request now
+    //         if(this.status == 201 && this.readyState == 4){    
+    //             console.log("YESS");
+    //             console.log(request.responseText);
+    //         }
+    //         else{
+    //             console.log("Error");
+    //         }
+    //     };
+
+
+    //     request.send(new FormData(event.target)); // create FormData from form that triggered event
+    //     event.preventDefault();
+    // }
+
+//     function attachFormSubmitEvent(formId){
+//         document.getElementById("myForm").addEventListener("submit", formSubmit);
+//     }
+    
+    
+//     function myFunction(event) {
+//         // var x = document.getElementById("myInput");
+//         var x = document.querySelector('input').files[0];
+
+//         // webs
+//         // var transfer = new WebSocketFileTransfer({
+//             // url: 'gs://audio_frejun/'+String(x.filename),
+//             // file: x,
+//             // progress: function(event) {
+//                 // Update the progress bar
+//             // },
+//             // success: function(event) {
+//                 // console.log("DONENNER")
+//             // }
+//         // });
+
+//         // transfer.start();
+//         // console.log(x.getBinary);
+//         // x.disabled = true;
+//         // loadFileAsText(x);
+//         // uploadFile();
+//         // callAPI(x);
+//         // var enc = window.btoa(x)
+//         // getBase64(x);
+//         // console.log(enc);
+//     }
+//     function loadFileAsText(){
+//         var fileToLoad = document.getElementById("file").files[0];
+//         // fileToLoad.getAsBinary();
+//         var fileReader = new FileReader();
+//         fileReader.onload = function(fileLoadedEvent){
+//             if(this.readyState == 2){
+//                 var textFromFileLoaded = fileLoadedEvent.target.result;
+//                 console.log(fileLoadedEvent.target.result);
+//                 uploadFile(fileLoadedEvent);
+//                 // console.log(array);
+//                 // data_file = fileLoadedEvent.target;
+//                 // console.log(data_file.result);
+                
+//                 // uploadFile(filename);
+//                 // document.getElementById("inputTextToSave").value = textFromFileLoaded;
+//             }
+//             else
+//                 console.log("LoadFileError.")
+//         };
+//         fileReader.readAsDataURL(fileToLoad);
+// }
+
+
+    // function uploadFile(event){
+
+    //     // console.log(event.)
+        
+    //     var filename = document.querySelector('input').files[0];
+    //     var x = document.getElementById('file');
+    //     // console.log(data_file.result.toString());
+    //     // const data = {
+    //     //     data : String(data_file.result),
+    //     // }
+    //     console.log(x.files[0]);
+    //     const request = 
+    //     {
+    //         file : event.target.result.substring(23),
+    //     };  
+    //     const xhtml = new XMLHttpRequest();
+    //     xhtml.open('POST','https://www.googleapis.com/upload/storage/v1/b/audio_frejun/o?uploadType=media&name='+String(filename.name),true);
+    //     xhtml.setRequestHeader('Content-type', String(filename.type));
+    //     // xhtml.setRequestHeader('Content-length', String(filename.size));
+    //     xhtml.onload = function() {
+    //         if(this.status == 200 && this.readyState == 4){
+    //             res = JSON.parse(this.response);
+    //             console.log(res);
+    //             // callAPI(filename);
+    //             // recur(res);
+    //             // id = setInterval(function() { recur(res);} , 60 * 1000);
+    //             // console.log("DoubleDone3");
+    //         }
+    //         else{
+    //             console.log("ERROR.");
+    //         }
+    //     };
+
+    //     xhtml.send(JSON.stringify(request));
+        
+    // }
+
+
+    function delete_file()
+    {
+        console.log("IN");
+        // curl -X DELETE \
+        // -H "Authorization: Bearer [OAUTH2_TOKEN]" \
+        // "https://www.googleapis.com/storage/v1/b/[BUCKET_NAME]/o/[OBJECT_NAME]"
+
+        const xhtml = new XMLHttpRequest();
+        xhtml.open('DELETE','https://www.googleapis.com/storage/v1/b/audio_frejun/o/'+String(FILE));
+        xhtml.onload = function(){
+            console.log("FileDELETED.");
+        };
+        xhtml.onerror = function() { 
+            console.log("ERROR IN FILE DELETE");
+            document.getElementById('error') = "ERROR IN FILE DELETE.";
+        };
+        xhtml.send();
+    }
+
+    function finall(resp)
+    {
+        // var resp2 = JSON.parse(resp.response);
+        var resp2 = resp.response;
+        console.log(resp2);
+        console.log(resp2.results);
+        // var result = resp2.results[0].alternatives[-1];
+        console.log(resp2.results[resp2.results.length -1]);
+        console.log(resp2.results[resp2.results.length -1].alternatives);
+        console.log(resp2.results[resp2.results.length -1].alternatives[0].words);
+        // var result = resp2.results[resp2.results.length-1].alternatives[0].words;
+        // console.log(result);
+        // console.log(resp2.results.alternatives[0]);
+        var tag = 1,i=0;
+        // var answer = JSON.parse(resp2.results[0]);
+        var words_info = resp2.results[resp2.results.length -1].alternatives[0].words;
+        // console.log(result.length);
+        // while(answer){
+        //     if(tag%2 == 0)
+        //         speaker = "SPEAKER 1: " + answer.alternatives.transcript;
+        //     else
+        //         speaker = "SPEAKER 2: " + answer.alternatives.transcript;
+        //     tag += 1;
+        //     answer = JSON.parse(corr2.results[tag])
+        // }
+        var speaker = "",answer="",x=0;
+        while(i < words_info.length){
+            x=0;
+            var word_info = words_info[i];
+            // console.log(word_info);
+            console.log(word_info.speakerTag);
+            // console.log(word_info.tag);
+            // console.log(word_info.speakerTag);
+            console.log(speaker);
+            if(word_info.speakerTag == tag){
+                console.log("IN_if")
+                speaker = speaker + " " + word_info.word;
+            }
+            else{
+                x=1;
+                if(speaker){
+                    console.log(speaker);
+                    answer += String("SPEAKER ") + tag + String(": ") + speaker + String(".\n<br>");
+                }
+                console.log(answer);
+                // }
+                tag = word_info.speakerTag;
+                speaker = "" + word_info.word ;
+            }
+            i+=1;
+        }
+        if(speaker){
+            answer += String("SPEAKER ") + tag + String(": ") + speaker + String(".\n<br>");
+        }
+        else{
+            if(word_info.speakerTag == tag && x == 0){
+                answer += word_info.word + String(".");
+            }
+            else{
+                answer += String("SPEAKER ") + tag + String(": ") + word_info.word + String(".");
+            }
+        }
+        document.getElementById('transcript').innerHTML = String(answer);
+        delete_file();
+    }
+
+    function recur(val) {
+        console.log("Again")
+        var xhtml2 = new XMLHttpRequest();
+        var res2 = "https://speech.googleapis.com/v1p1beta1/operations/" + val.name + "?key=AIzaSyCcO8tp1RtwPj32t_VDiado11QQYp7Bdnc" ;
+        xhtml2.open("GET", res2, true);
+        xhtml2.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+        xhtml2.onload = function() {
+            // if(this.status == 200 && this.readyState == 4){
+                // corr = JSON.parse(xhtml2.response);
+            corr = this.response;
+            console.log(corr);
+            corr = JSON.parse(corr);
+            // console.log(JSON.stringify(corr.name));
+            if(corr){
+                if(corr.done == true){
+                    console.log("done");
+                    done = 1;
+                    clearInterval(id);
+                    console.log("DoubleDone");
+                    document.getElementById('transcript').innerHTML = JSON.stringify('Done');
+                    finall(corr);
+                }
+                else{
+                    if(corr.metadata.progressPercent)
+                        document.getElementById('transcript').innerHTML = "Please Wait !! <br>" + String(corr.metadata.progressPercent)
+                        + "% complete ";
+                    else
+                        document.getElementById('transcript').innerHTML = "Please Wait !!" ;
+                }
+                // setInterval(recur(res),12000000)
+            }
+            // else
+                // console.log("Error2");
+        };
+        xhtml2.onerror = function() { 
+            console.log("ERROR2.");
+            document.getElementById('error') = "ERROR IN GET OPERATION recur()";
+        }
+        xhtml2.send();
+    }
+
+    // var id = setInterval(function(res){
+
+    // })
+
+    function callAPI(filename) {
+        // const speech = require('@google-cloud/speech').v1p1beta1;
+
+        // const client = new speech.SpeechClient();
+        // console.log(res.substring(23));
+        const request = 
+        {
+            "audio": {
+                "uri": "gs://audio_frejun/"+String(filename),
+            },
+            "config": {
+                "encoding": "FLAC",
+                "languageCode": "en-US",
+                "sampleRateHertz": 16000,
+                "enableSpeakerDiarization": true,
+                "diarizationSpeakerCount": 2
+            }
+        };
+        // const audio = {
+        //     // content: audioBytes,
+        //     uri: 'gs://audio_frejun/' + String(filename.name),
+        // };
+        // const config = {
+        //     encoding: 'FLAC',
+        //     sampleRateHertz: 16000,
+        //     languageCode: 'en-US',
+        //     enableSpeakerDiarization: true,
+        //     diarizationSpeakerCount: 2,
+        // };
+        // const request = {
+        //     audio: audio,
+        //     config: config,
+        // };
+        // const sp = window.speechSynthesis;
+        const xhtml = new XMLHttpRequest();
+        xhtml.open('POST','https://speech.googleapis.com/v1p1beta1/speech:longrunningrecognize?alt=json&key=AIzaSyCcO8tp1RtwPj32t_VDiado11QQYp7Bdnc',true);
+        xhtml.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+        // xhtml.setRequestHeader('Access-Control-Allow-origin', '');
+        // xhtml.setRequestHeader('Access-Control-Allow-origin', '*');
+        // xhtml.setRequestHeader('Authorization', '');
+        xhtml.send(JSON.stringify(request));
+        xhtml.onload = function() {
+            if(this.status == 200 && this.readyState == 4){
+                res = JSON.parse(this.response);
+                console.log(res.name);
+                recur(res);
+                id = setInterval(function() { recur(res);} , 60 * 1000);
+                console.log("DoubleDone3");
+            }
+            else{
+                console.log("ERROR.");
+                document.getElementById('error') = "ERROR IN callAPI()";
+            }
+        };
+        // xhtml.onerror = function() {
+            // console.log('Error');
+        // };
+        console.log("DoubleDone2");
+        // POST request to https://speech.googleapis.com/v1/speech:recognize
+    }
+    console.log("DoubleDone4");
+  </script>
+
+</html>

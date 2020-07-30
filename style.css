@@ -1,0 +1,23 @@
+
+#container {
+    margin: 0%;
+    /* background-color:; */
+    font-size: 20px;
+    border:1px solid black;
+    height:40%;
+}
+
+#transcript , #confidence {
+    /* visibility: ; */
+    /* background-color:grey; */
+    text-align: left;
+    /* font-size: 15px; */
+    border:1px solid green;
+    /* height:30%; */
+    margin-top: 20px;
+    margin-left: auto;
+}
+
+body{
+
+}
